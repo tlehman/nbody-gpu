@@ -1,5 +1,5 @@
 all:
-	nvcc main.cu
+	gcc main.c -lm
 
 clean:
 	rm a.out

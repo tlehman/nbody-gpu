@@ -27,11 +27,17 @@ Once initialized, the simulation loop will take over.
 
 The state of the universe is an array of length $n$, each cell of the array is the state of a body:
 
-```c++
-struct body {
-    float radius;      // radius
-    float x,y,z;       // position
-    float vx, vy, vz;  // velocity
-    float m;           // mass
-};
+```c
+typedef struct body {
+    float r; // radius
+    float m; // mass
+    float x,y,z;    // position
+    float vx,vy,vz; // velocity
+} body;
 ```
+
+## Algorithms
+
+To update the state of the universe, each unique pair of bodies needs to be selected to calculate it's mutual gravitational attraction. So with $n$ bodies, this runs at $O(n^2)$. 
+
+We can pass in the $n$ bodies into GPU memory, and then divide the CUDA kernels up to compute the force vectors in parallel.
