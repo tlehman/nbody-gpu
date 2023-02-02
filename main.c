@@ -1,3 +1,4 @@
+#include <string.h>
 #include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
@@ -39,30 +40,11 @@ void initialize_binary_star() {
 
     // Set positions
     bodies[0].x = d;
-    bodies[0].y = 0;
-    bodies[0].z = 0;
-
     bodies[1].x = -d;
-    bodies[1].y = 0;
-    bodies[1].z = 0;
 
     // Set the velocities
-    bodies[0].vx = 0;
     bodies[0].vy = v;
-    bodies[0].vz = 0;
-
-    bodies[1].vx = 0;
     bodies[1].vy = -v;
-    bodies[1].vz = 0;
-
-    // Zero out the forces
-    bodies[0].fx = 0;
-    bodies[0].fy = 0;
-    bodies[0].fz = 0;
-
-    bodies[1].fx = 0;
-    bodies[1].fy = 0;
-    bodies[1].fz = 0;
 }
 
 void evolve_universe() {
@@ -145,6 +127,7 @@ void display(void) {
 int main(int argc, char *argv[]) {
     // -1: Allocate dynamic global variable. No I'm not sorry
     bodies = malloc(n * sizeof(body));
+    memset(bodies, 0, n * sizeof(body)); // zero out all the things
 
     // 0. Handle system signals
     signal(SIGINT, sig_handler);
