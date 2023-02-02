@@ -1,3 +1,4 @@
+#include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,18 +13,22 @@ typedef struct body {
 } body;
 
 const float G = 1.0;
-const int n = 2;
-const float dt = 0.0001;
+static int n = 2;
+const float dt = 0.001;
+
+// In this universe we use global variables
+body * bodies;
 
 void sig_handler(int signum) {
     printf("SIGNAL RECEIVED: %d\n", signum);
     printf("cleaning up.");
+    free(bodies);
     exit(0);
 }
 
-void initialize_binary_star(body* bodies) {
+void initialize_binary_star() {
     float m = 10.0;
-    float r = 0.2;
+    float r = 0.1;
     float d = 1.0;
     float v = sqrt((G * m)/(4 * d));
     // Set mass and radius
@@ -60,7 +65,7 @@ void initialize_binary_star(body* bodies) {
     bodies[1].fz = 0;
 }
 
-void evolve_universe(body* bodies) {
+void evolve_universe() {
     float mi, mj, rij;
     float xij, yij, zij;
     float f, fijx, fijy, fijz;
@@ -118,20 +123,48 @@ void evolve_universe(body* bodies) {
         );
     }
     printf("\n");
+    glutPostRedisplay();
 }
 
-int main() {
+// display the state of the universe using OpenGL
+void display(void) {
+    glClear(GL_COLOR_BUFFER_BIT);
+    float x,y,z,r;
+    for(int i = 0; i < n; i++) {
+        glPushMatrix();
+        x = bodies[i].x;
+        y = bodies[i].y;
+        r = bodies[i].r;
+        glTranslatef(x, y, 0);
+        glutSolidSphere(r, 20, 16);
+        glPopMatrix();
+    }
+    glutSwapBuffers();
+}
+
+int main(int argc, char *argv[]) {
+    // -1: Allocate dynamic global variable. No I'm not sorry
+    bodies = malloc(n * sizeof(body));
+
     // 0. Handle system signals
     signal(SIGINT, sig_handler);
 
     // 1. Set up initial conditions for a binary star system
-    body bodies[n];
     initialize_binary_star(bodies);
 
-    // 2. Run physics loop
-    while(1) {
-        evolve_universe(bodies);
-    }
+    // 2. Initialize the OpenGL stuff
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("n-body simulation");
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 
+
+    // 3. Roll physics loop into graphics display loop
+    glutDisplayFunc(display);
+    glutIdleFunc(evolve_universe);
+    glutMainLoop();
+
+    free(bodies);
     return 0;
 }
