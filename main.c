@@ -4,18 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include "initial_conditions.h"
 
-typedef struct body {
-    float r;        // radius
-    float m;        // mass
-    float x,y,z;    // position
-    float vx,vy,vz; // velocity
-    float fx,fy,fz; // force on object (added up each sim loop)
-} body;
-
-const float G = 1.0;
 static int n = 2;
-const float dt = 0.001;
+const float dt = 0.01;
 
 // In this universe we use global variables
 body * bodies;
@@ -25,26 +17,6 @@ void sig_handler(int signum) {
     printf("cleaning up.");
     free(bodies);
     exit(0);
-}
-
-void initialize_binary_star() {
-    float m = 10.0;
-    float r = 0.1;
-    float d = 1.0;
-    float v = sqrt((G * m)/(4 * d));
-    // Set mass and radius
-    bodies[0].m = m;
-    bodies[0].r = r;
-    bodies[1].m = m;
-    bodies[1].r = r;
-
-    // Set positions
-    bodies[0].x = d;
-    bodies[1].x = -d;
-
-    // Set the velocities
-    bodies[0].vy = v;
-    bodies[1].vy = -v;
 }
 
 void evolve_universe() {
@@ -133,7 +105,7 @@ int main(int argc, char *argv[]) {
     signal(SIGINT, sig_handler);
 
     // 1. Set up initial conditions for a binary star system
-    initialize_binary_star(bodies);
+    initialize_binary_star(bodies, n);
 
     // 2. Initialize the OpenGL stuff
     glutInit(&argc, argv);
