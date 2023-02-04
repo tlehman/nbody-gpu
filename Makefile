@@ -5,7 +5,7 @@ spheres:
 	gcc spheres.c -o spheres -lglut -lGL -lm
 
 debug:
-	gcc -g main.c -lm
+	gcc main.c -lm -lglut -lGL -lGLU -lm -g
 
 clean:
 	rm a.out
