@@ -9,8 +9,7 @@ by @tlehman
 ## Assumptions (in the real world)
 - Existence of an NVIDIA GPU
 - Computer runs Linux
-- OpenGL is present (TODO)
-
+- OpenGL is present
 ## The equations of motion
 
 Each of the $n$ bodies will have a mass $m$ and a position $x(t)$ that is a 3-vector like $(0.1, -0.2, 3.1)$
